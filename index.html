@@ -1,206 +1,458 @@
 ﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>世界和平 — Peace for the World</title>
-    <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>世界和平 · 反战</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:#0a0a0a;color:#e8e8e8;font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;overflow-x:hidden}
+#nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;justify-content:space-between;align-items:center;padding:16px 40px;background:rgba(10,10,10,.82);backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);border-bottom:1px solid rgba(255,255,255,.08);transition:box-shadow .3s}
+#nav.scrolled{box-shadow:0 1px 8px rgba(0,0,0,.03)}
+.nav-brand{font-size:14px;letter-spacing:2px;color:#b8a89a;font-weight:600}
+#nav a{color:#888;font-size:12px;text-decoration:none;border:1px solid rgba(255,255,255,.12);border-radius:3px;padding:6px 16px;transition:all .3s}
+#nav a:hover{background:rgba(255,255,255,.06);color:#ccc}
+.slide-bg{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:#dce1e4}
+.slide-bg img{width:100%;height:100%;object-fit:cover}
+.overlay{position:absolute;inset:0}
+
+/* ── Hero Section (全屏标题, overflow hidden) ── */
+#hero{position:relative;height:100vh;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;background:#000}
+.hero-noise{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(255,255,255,.03) 0%,transparent 70%);pointer-events:none}
+.hero-content{text-align:center;position:relative;z-index:2;max-width:95vw}
+.hero-content h1{font-size:clamp(3rem,8vw,7rem);font-weight:900;line-height:1.05;letter-spacing:-1px;color:#fff;margin:0 -5vw}
+.hero-content h1:nth-child(2){color:#fff;margin-bottom:20px;margin-top:-4px}
+.hero-content .war-text{position:relative;display:inline-block}
+.hero-content .war-text::after{content:"";position:absolute;left:0;bottom:2px;width:100%;height:1px;background:#c0392b;transform:scaleX(1);transform-origin:left}
+.hero-content .steal-text{display:inline-block;transform:rotate(-4deg);transform-origin:center}
+.hero-content p:first-of-type{font-size:clamp(.85rem,1.6vw,1.15rem);color:rgba(255,255,255,.5);letter-spacing:12px;text-transform:uppercase;margin-bottom:24px}
+.hero-line{width:64px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);margin:0 auto 20px}
+.hero-sub{font-size:clamp(.82rem,1.3vw,1rem);color:rgba(255,255,255,.35)}
+.scroll-hint{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.25);font-size:12px;letter-spacing:2px;z-index:2;animation:bounce 2.4s ease-in-out infinite}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(7px)}}
+
+/* ── Sections ── */
+section{position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:80px 40px 40px}
+.stats-grid{background:transparent;gap:20px;display:flex;flex-wrap:wrap;justify-content:center;align-content:center}
+.stats-grid .overlay{background:rgba(0,0,0,.4)}
+.stat-card{background:rgba(10,10,10,.75);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(200,200,200,.18);border-radius:16px;padding:32px 28px;text-align:center;min-width:170px;flex:0 1 190px;position:relative;z-index:1}
+.stat-card .number{font-size:clamp(1.8rem,4.2vw,3rem);font-weight:900;color:#e8d5a8;line-height:1.15}
+.stat-card .label{font-size:clamp(.76rem,1.05vw,.9rem);color:rgba(232,232,232,.8);font-weight:600;margin-top:8px;line-height:1.5}
+.two-col{background:linear-gradient(180deg,#0a0a0a 0%,#111 100%);flex-direction:row!important;gap:40px;padding:80px 60px}
+.col-box{flex:1;max-width:500px;padding:36px;border-radius:16px;position:relative;overflow:hidden;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)}
+.col-bg{position:absolute;inset:0;z-index:0;overflow:hidden;border-radius:16px;pointer-events:none}
+.col-bg img{width:100%;height:100%;object-fit:cover;filter:grayscale(.35) contrast(.85) brightness(1.1)}
+.col-bg .overlay{background:rgba(0,0,0,.45)}
+.col-box-inner{position:relative;z-index:1}
+.col-box h2{font-size:clamp(1.15rem,2.2vw,1.6rem);color:#e8e8e8;margin-bottom:12px;font-weight:800}
+.col-box p{font-size:clamp(.82rem,1.15vw,.95rem);line-height:1.9;color:rgba(232,232,232,.62)}
+.col-box .big-stat{font-size:clamp(2.2rem,5.5vw,4rem);font-weight:800;color:#b8a89a;margin:12px 0}
+.giant-number{background:#0a0a0a;text-align:center}
+.giant-number .overlay{background:rgba(0,0,0,.35)}
+.giant-number .gc{position:relative;z-index:1;max-width:700px}
+.giant-number .giga{font-size:clamp(3.5rem,12vw,9rem);font-weight:800;color:#b8a89a;line-height:1;margin-bottom:14px;text-shadow:0 2px 30px rgba(0,0,0,.4)}
+.giant-number .sub{font-size:clamp(.95rem,2vw,1.4rem);color:#e8e8e8;font-weight:700;letter-spacing:4px}
+.giant-number .desc{font-size:clamp(.82rem,1.2vw,.95rem);color:rgba(232,232,232,.5);margin-top:10px;max-width:520px;line-height:1.8;margin-left:auto;margin-right:auto}
+.eco-cost{background:#0a0a0a;text-align:center}
+.eco-cost .overlay{background:rgba(0,0,0,.35)}
+.eco-cost .eco-bg2{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 60%,rgba(154,142,122,.07) 0%,transparent 60%);pointer-events:none;z-index:1}
+.eco-cost .eco-title{font-size:clamp(1.1rem,2.2vw,1.6rem);color:#e8e8e8;font-weight:800;margin-bottom:16px;position:relative;z-index:2}
+.eco-cost .eco-giga{font-size:clamp(3.5rem,12vw,9rem);font-weight:800;color:#b8a89a;line-height:1;margin-bottom:10px;position:relative;z-index:2;text-shadow:0 2px 30px rgba(0,0,0,.4)}
+.eco-cost .eco-unit{font-size:clamp(.85rem,1.4vw,1.05rem);color:rgba(232,232,232,.45);letter-spacing:2px;margin-bottom:16px;position:relative;z-index:2;font-weight:600}
+.eco-cost .eco-desc{font-size:clamp(.8rem,1.15vw,.92rem);color:rgba(232,232,232,.5);max-width:560px;line-height:1.9;position:relative;z-index:2;margin:0 auto}
+.economy{background:#0a0a0a}
+.economy .overlay{background:rgba(0,0,0,.4)}
+.economy-inner{display:flex;flex-wrap:wrap;gap:24px;justify-content:center;align-items:center;max-width:900px;width:100%;position:relative;z-index:1}
+.economy-left{flex:1;min-width:230px;text-align:right;padding-right:16px}
+.economy-left h2{font-size:clamp(1.1rem,2.2vw,1.6rem);color:#e8e8e8;font-weight:800;margin-bottom:12px}
+.economy-left p{font-size:clamp(.8rem,1.15vw,.92rem);line-height:1.9;color:rgba(232,232,232,.55);max-width:360px;margin-left:auto}
+.economy-divider{width:2px;height:130px;background:linear-gradient(180deg,transparent,#b8a89a,transparent);flex-shrink:0}
+.economy-right{flex:1;min-width:230px;padding-left:16px}
+.economy-right .eco-giga{font-size:clamp(2.5rem,7vw,5.5rem);font-weight:800;color:#b8a89a;line-height:1;margin-bottom:6px}
+.economy-right .eco-unit{font-size:clamp(.78rem,1.2vw,.95rem);color:rgba(232,232,232,.4);letter-spacing:2px}
+.displaced{background:#0a0a0a;text-align:center}
+.displaced .overlay{background:rgba(0,0,0,.4)}
+.displaced-bg{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:1}
+.displaced-bg .globe{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(56vw,380px);height:min(56vw,380px);border-radius:50%;border:1px solid rgba(154,142,122,.15);background:radial-gradient(circle,rgba(122,143,148,.04) 0%,transparent 65%)}
+.displaced-bg .globe-inner{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(36vw,260px);height:min(36vw,260px);border-radius:50%;border:1px dashed rgba(154,142,122,.1)}
+.dot-group{position:absolute;width:100%;height:100%;left:0;top:0}
+.dot-group span{position:absolute;width:3px;height:3px;background:rgba(122,143,148,.45);border-radius:50%;animation:dotPulse 3.5s ease-in-out infinite}
+@keyframes dotPulse{0%,100%{opacity:.15}50%{opacity:.55}}
+.displaced-content{position:relative;z-index:2;max-width:600px}
+.displaced-content h2{font-size:clamp(1.1rem,2.2vw,1.6rem);color:#e8e8e8;font-weight:800;margin-bottom:16px}
+.displaced-content .d-giga{font-size:clamp(2.8rem,9vw,6.5rem);font-weight:800;color:#b8a89a;line-height:1;margin-bottom:6px;text-shadow:0 2px 30px rgba(0,0,0,.4)}
+.displaced-content .d-unit{font-size:clamp(.78rem,1.2vw,.95rem);color:rgba(232,232,232,.4);letter-spacing:2px;margin-bottom:16px}
+.displaced-content .d-desc{font-size:clamp(.8rem,1.15vw,.92rem);color:rgba(232,232,232,.5);max-width:520px;line-height:1.9;margin:0 auto}
+.call-to-action{background:#0a0a0a;text-align:center}
+.call-to-action .overlay{background:rgba(0,0,0,.38)}
+.cta-content{position:relative;z-index:1;max-width:640px}
+.cta-content h2{font-size:clamp(1.2rem,2.6vw,2rem);color:#e8e8e8;font-weight:800;margin-bottom:16px;line-height:1.4;text-shadow:0 2px 12px rgba(0,0,0,.5)}
+.cta-content h2 span{color:#b8a89a}
+.cta-content p{font-size:clamp(.8rem,1.15vw,.92rem);color:#e8e8e8;line-height:1.9;margin-bottom:28px;text-shadow:0 1px 8px rgba(0,0,0,.5)}
+.cta-btn{display:inline-block;padding:12px 36px;font-size:clamp(.83rem,1.15vw,.98rem);color:#111;background:#b8a89a;border:none;border-radius:6px;font-weight:700;letter-spacing:1px;cursor:pointer;text-decoration:none;transition:all .3s}
+.cta-btn:hover{background:#a8987a;transform:translateY(-2px)}
+.cta-source{font-size:clamp(.66rem,.85vw,.76rem);color:rgba(232,232,232,.7);margin-top:28px;letter-spacing:.5px;line-height:1.6;text-shadow:0 1px 6px rgba(0,0,0,.5)}
+.footer-credit{position:fixed;bottom:12px;right:16px;font-size:11px;color:rgba(232,232,232,.3);letter-spacing:1px;z-index:9999;pointer-events:none;font-weight:300}
+
+@media(max-width:768px){
+.two-col{flex-direction:column!important;padding:60px 24px;gap:20px}
+.col-box{padding:24px 20px}
+.stat-card{padding:24px 20px;min-width:130px;flex:0 1 150px}
+.economy-inner{flex-direction:column!important;gap:12px}
+.economy-left{text-align:center;padding-right:0}
+.economy-left p{margin-left:auto;margin-right:auto}
+.economy-divider{width:80px;height:2px}
+.economy-right{text-align:center;padding-left:0}
+.hero-content h1{letter-spacing:0}
+.cta-btn{padding:10px 24px}
+#nav{padding:12px 20px}
+section{padding:80px 24px 40px}
+}
+@media(max-width:480px){
+.stat-card{min-width:110px;flex:0 1 130px;padding:20px 16px}
+.col-box{padding:16px 14px}
+}
+</style>
 </head>
 <body>
-    <!-- 导航栏 -->
-    <nav id="navbar">
-        <div class="container">
-            <div class="nav-brand">
-                <span class="nav-logo">☮</span>
-                <span class="nav-title">世界和平</span>
-            </div>
-            <div class="nav-links" id="navLinks">
-                <a href="#hero" class="active">首页</a>
-                <a href="#about">和平的意义</a>
-                <a href="#facts">战争的代价</a>
-                <a href="#voices">和平的声音</a>
-                <a href="#action">行动起来</a>
-            </div>
-            <button class="nav-toggle" id="navToggle">☰</button>
-        </div>
-    </nav>
 
-    <!-- Hero 区域 -->
-    <section id="hero">
-        <div class="hero-overlay"></div>
-        <div class="container hero-content">
-            <div class="hero-icon">🕊️</div>
-            <h1>世界和平</h1>
-            <p class="hero-subtitle">Peace for the World</p>
-            <p class="hero-desc">战争中没有赢家，和平没有输家。让我们携手共建一个没有战争的未来。</p>
-            <div class="hero-actions">
-                <a href="#action" class="btn btn-primary">加入我们</a>
-                <a href="#about" class="btn btn-secondary">了解更多</a>
-            </div>
-        </div>
-        <div class="scroll-indicator">
-            <span>向下滚动</span>
-            <div class="scroll-arrow">↓</div>
-        </div>
-    </section>
+<nav id="nav">
+  <div class="nav-brand">世界和平 · 反战</div>
+  <a href="https://www.un.org/peace" target="_blank" rel="noopener">联合国防和平</a>
+</nav>
 
-    <!-- 和平的意义 -->
-    <section id="about">
-        <div class="container">
-            <h2 class="section-title">和平的意义</h2>
-            <p class="section-subtitle">和平不仅是战争的缺席，更是正义、自由与尊严的存在</p>
-            <div class="cards-grid">
-                <div class="card">
-                    <div class="card-icon">🌍</div>
-                    <h3>全球共融</h3>
-                    <p>和平让不同种族、文化、信仰的人们能够相互理解、尊重与合作，共同建设一个包容的世界。</p>
-                </div>
-                <div class="card">
-                    <div class="card-icon">🌱</div>
-                    <h3>可持续发展</h3>
-                    <p>和平为教育、医疗、经济和环境保护创造稳定的环境，让每一个生命都有机会绽放。</p>
-                </div>
-                <div class="card">
-                    <div class="card-icon">🤝</div>
-                    <h3>人类一家</h3>
-                    <p>无论身在何方，我们共享同一片蓝天。和平提醒我们：人类命运共同体不是口号，而是我们共同的未来。</p>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- ── Hero: 100vh overflow hidden ── -->
+<div id="hero">
+  <div class="hero-noise"></div>
+  <div class="hero-content" id="heroText">
+    <h1 id="h1a">不要让<span class="war-text">战争</span></h1>
+    <h1 id="h1b"><span class="steal-text">偷走</span>下一代的未来</h1>
+    <p id="hSub">World Peace · No More War</p>
+    <div id="hLine" class="hero-line"></div>
+    <p id="hDesc" class="hero-sub">每个数字背后，都是一个破碎的家庭</p>
+  </div>
+  <div class="scroll-hint" id="scrollHint">↓ 向下滚动</div>
+</div>
 
-    <!-- 战争的代价 -->
-    <section id="facts" class="dark-section">
-        <div class="container">
-            <h2 class="section-title">战争的代价</h2>
-            <p class="section-subtitle">每一场战争背后，都是无数被摧毁的生命和希望</p>
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="stat-number" data-target="40000000">0</div>
-                    <p class="stat-label">二战死亡人数</p>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number" data-target="10000000">0</div>
-                    <p class="stat-label">一战后遗留地雷致死致残</p>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number" data-target="80000000">0</div>
-                    <p class="stat-label">全球被迫流离失所人数</p>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number" data-target="2000000000">0</div>
-                    <p class="stat-label">2024年全球军费开支（美元）</p>
-                </div>
-            </div>
-            <div class="war-quote">
-                <blockquote>
-                    "战争不过是另一种形式的外交手段的延续。但它的代价，永远由最无辜的人承担。"
-                    <cite>—— 克劳塞维茨（反思）</cite>
-                </blockquote>
-            </div>
-        </div>
-    </section>
+<!-- ── Section 2: Stats Grid ── -->
+<section class="stats-grid" id="sec2" style="position:relative">
+  <div class="slide-bg" id="sec2Bg">
+    <img src="https://images.unsplash.com/photo-1764757766187-f97320d2d9ef?w=1600&q=80" alt="战争废墟" loading="lazy">
+    <div class="overlay" style="background:rgba(0,0,0,.45)"></div>
+  </div>
+  <div class="stat-card card1"><div class="number">7,000万+</div><div class="label">二战全球军民伤亡</div></div>
+  <div class="stat-card card2"><div class="number">90%</div><div class="label">战争伤亡为平民</div></div>
+  <div class="stat-card card3"><div class="number">1.08亿</div><div class="label">全球被迫流离失所者</div></div>
+  <div class="stat-card card4"><div class="number">4,000万</div><div class="label">二战欧洲平民死亡</div></div>
+</section>
 
-    <!-- 和平的声音 -->
-    <section id="voices">
-        <div class="container">
-            <h2 class="section-title">和平的声音</h2>
-            <p class="section-subtitle">历史上那些为和平发出最有力呼唤的人们</p>
-            <div class="voices-grid">
-                <div class="voice-card">
-                    <div class="voice-avatar"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#e8d5b7"/><circle cx="35" cy="40" r="6" fill="#555"/><circle cx="65" cy="40" r="6" fill="#555"/><path d="M35 60 Q50 75 65 60" stroke="#555" stroke-width="3" fill="none" stroke-linecap="round"/></svg></div>
-                    <h3>圣雄甘地</h3>
-                    <blockquote>"以眼还眼，世界只会更盲目。"</blockquote>
-                </div>
-                <div class="voice-card">
-                    <div class="voice-avatar"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#f5d6c6"/><circle cx="35" cy="40" r="6" fill="#555"/><circle cx="65" cy="40" r="6" fill="#555"/><path d="M35 60 Q50 75 65 60" stroke="#555" stroke-width="3" fill="none" stroke-linecap="round"/></svg></div>
-                    <h3>纳尔逊·曼德拉</h3>
-                    <blockquote>"和平不仅仅是放下武器，而是消除一切不公。"</blockquote>
-                </div>
-                <div class="voice-card">
-                    <div class="voice-avatar"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#c6e8f5"/><circle cx="35" cy="40" r="6" fill="#555"/><circle cx="65" cy="40" r="6" fill="#555"/><path d="M35 60 Q50 75 65 60" stroke="#555" stroke-width="3" fill="none" stroke-linecap="round"/></svg></div>
-                    <h3>阿尔伯特·爱因斯坦</h3>
-                    <blockquote>"我不知道第三次世界大战会用哪些武器，但第四次世界大战会用木棍和石头。"</blockquote>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- ── Section 3: Two-Column ── -->
+<section class="two-col" id="sec3">
+  <div class="slide-bg" id="sec3Bg">
+    <img src="https://images.unsplash.com/photo-1549937533-0ac606e88031?w=1600&q=80" alt="" loading="lazy" style="opacity:0.3;filter:blur(8px) grayscale(0.6)">
+    <div class="overlay" style="background:rgba(10,10,10,.7)"></div>
+  </div>
+  <div class="col-box" id="col3a">
+    <div class="col-bg"><img src="https://images.unsplash.com/photo-1674049406387-86c6d13a8285?w=800&q=80" alt="" loading="lazy"><div class="overlay" style="background:rgba(0,0,0,.4)"></div></div>
+    <div class="col-box-inner"><h2>看不见的伤口</h2><p>战争不仅仅夺走生命。幸存者终生背负着心理创伤——PTSD、焦虑、抑郁。在冲突地区，每三个儿童中就有一个表现出创伤后应激障碍的症状。那些看不见的伤口，往往比子弹更难愈合。</p></div>
+  </div>
+  <div class="col-box" id="col3b">
+    <div class="col-bg"><img src="https://images.unsplash.com/photo-1618570624585-43156608a47c?w=800&q=80" alt="" loading="lazy"><div class="overlay" style="background:rgba(0,0,0,.4)"></div></div>
+    <div class="col-box-inner"><h2>跨越世代的代价</h2><div class="big-stat">$19.6万亿</div><p>斯德哥尔摩国际和平研究所估算，2024年全球军费开支达到历史新高。这相当于每分钟就有超过370万美元被投入战争机器，而不是教育、医疗和气候行动。</p></div>
+  </div>
+</section>
 
-    <!-- 行动起来 -->
-    <section id="action" class="dark-section">
-        <div class="container">
-            <h2 class="section-title">行动起来</h2>
-            <p class="section-subtitle">和平从每个人做起，从此刻开始</p>
-            <div class="action-grid">
-                <div class="action-item">
-                    <div class="action-icon">📚</div>
-                    <h3>了解真相</h3>
-                    <p>关注可靠新闻，了解世界各地的冲突和人道主义危机。</p>
-                </div>
-                <div class="action-item">
-                    <div class="action-icon">📢</div>
-                    <h3>传播和平</h3>
-                    <p>在社交媒体上分享和平的信息，让更多人意识到战争的残酷。</p>
-                </div>
-                <div class="action-item">
-                    <div class="action-icon">❤️</div>
-                    <h3>支持援助</h3>
-                    <p>向红十字国际委员会、联合国难民署等组织捐款，帮助战争受害者。</p>
-                </div>
-                <div class="action-item">
-                    <div class="action-icon">✍️</div>
-                    <h3>呼吁和平</h3>
-                    <p>写信给代表，参与和平游行，用你的声音要求选择外交而非战争。</p>
-                </div>
-                <div class="action-item">
-                    <div class="action-icon">🤗</div>
-                    <h3>日常善意</h3>
-                    <p>和平从身边开始。对他人友善，成为社区中和平的使者。</p>
-                </div>
-                <div class="action-item">
-                    <div class="action-icon">🌿</div>
-                    <h3>支持可持续</h3>
-                    <p>支持环保与可持续发展，减少因资源争夺引发的冲突。</p>
-                </div>
-            </div>
-            <div class="pledge-box">
-                <h3>✋ 和平承诺</h3>
-                <p>我承诺在日常生活中践行和平，反对暴力与不公，为更美好的世界贡献自己的一份力量。</p>
-                <button class="btn btn-primary" id="pledgeBtn">签署和平承诺</button>
-                <p class="pledge-count" id="pledgeCount">已有 <span id="countNum">12,847</span> 人签署</p>
-            </div>
-        </div>
-    </section>
+<!-- ── Section 4: Giant Number ── -->
+<section class="giant-number" id="sec4">
+  <div class="slide-bg" id="sec4Bg">
+    <img src="https://images.unsplash.com/photo-1549937533-0ac606e88031?w=1600&q=80" alt="" loading="lazy">
+    <div class="overlay" style="background:rgba(0,0,0,.35)"></div>
+  </div>
+  <div class="gc">
+    <div class="giga" id="gigaNum">7,000万+</div>
+    <div class="sub" id="gigaSub">二战全球军民伤亡</div>
+    <div class="desc" id="gigaDesc">这相当于今天法国和希腊的人口总和。每一条生命线背后，都是一个永远无法被填补的家庭——母亲失去儿子，孩子失去父亲，妻子失去丈夫。</div>
+  </div>
+</section>
 
-    <!-- 和平鸽粒子动画区 -->
-    <section id="dove-section">
-        <canvas id="doveCanvas"></canvas>
-        <div class="dove-message">
-            <h2>愿和平之鸽飞遍每一个角落</h2>
-            <p>World peace begins with you</p>
-        </div>
-    </section>
+<!-- ── Section 5: 生态 ── -->
+<section class="eco-cost" id="sec5">
+  <div class="slide-bg">
+    <img src="https://images.unsplash.com/photo-1727473704233-9b4aa9d6e82c?w=1600&q=80" alt="" loading="lazy">
+    <div class="overlay" style="background:rgba(0,0,0,.35)"></div>
+  </div>
+  <div class="eco-bg2"></div>
+  <div style="position:relative;z-index:2;max-width:700px">
+    <div class="eco-title" id="ecoTitle">被战火吞噬的家园</div>
+    <div class="eco-giga" id="ecoGiga">3000万吨</div>
+    <div class="eco-unit" id="ecoUnit">每年因战争产生的建筑垃圾与废墟</div>
+    <div class="eco-desc" id="ecoDesc">炮火摧毁的不仅是建筑，更是几代人赖以生存的生态系统。水源被污染，农田被炸毁，自然在人类冲突中被迫承受最沉重的代价。</div>
+  </div>
+</section>
 
-    <!-- 页脚 -->
-    <footer>
-        <div class="container footer-content">
-            <div class="footer-brand">
-                <span class="footer-logo">🕊️</span>
-                <span>世界和平 · Peace for the World</span>
-            </div>
-            <p class="footer-text">
-                战争中没有赢家，和平没有输家。<br>
-                In war there are no winners, in peace there are no losers.
-            </p>
-            <div class="footer-links">
-                <a href="#">关于本站</a>
-                <a href="#">资源</a>
-                <a href="#">联系我们</a>
-            </div>
-            <p class="footer-copy">© 2026 世界和平倡议 · 用爱与理性改变世界</p>
-        </div>
-    </footer>
+<!-- ── Section 6: 经济 ── -->
+<section class="economy" id="sec6">
+  <div class="slide-bg">
+    <img src="https://images.unsplash.com/photo-1759610314761-855c55114110?w=1600&q=80" alt="" loading="lazy">
+    <div class="overlay" style="background:rgba(0,0,0,.4)"></div>
+  </div>
+  <div class="economy-inner">
+    <div class="economy-left" id="ecoLeft"><h2>和平的红利去哪了？</h2><p>这是全球每年用于军事冲突与武器研发的支出。如果将这些资源转化为教育、医疗和清洁能源，足以消除全球大部分贫困。战争，是人类最昂贵的内耗。</p></div>
+    <div class="economy-divider" id="ecoDiv"></div>
+    <div class="economy-right" id="ecoRight"><div class="eco-giga">2.4万亿</div><div class="eco-unit">美元 · 全球年度军事支出</div></div>
+  </div>
+</section>
 
-    <script src="js/main.js"></script>
+<!-- ── Section 7: 流离失所 ── -->
+<section class="displaced" id="sec7">
+  <div class="slide-bg">
+    <img src="https://images.unsplash.com/photo-1766858581661-e62947f9e0b2?w=1600&q=80" alt="" loading="lazy">
+    <div class="overlay" style="background:rgba(0,0,0,.38)"></div>
+  </div>
+  <div class="displaced-bg">
+    <div class="globe"><div class="globe-inner"></div></div>
+    <div class="dot-group">
+      <span style="top:28%;left:35%;animation-delay:0s"></span>
+      <span style="top:45%;left:42%;animation-delay:.4s"></span>
+      <span style="top:35%;left:55%;animation-delay:.8s"></span>
+      <span style="top:52%;left:38%;animation-delay:1.2s"></span>
+      <span style="top:40%;left:60%;animation-delay:1.6s"></span>
+      <span style="top:30%;left:48%;animation-delay:.2s"></span>
+      <span style="top:48%;left:52%;animation-delay:.6s"></span>
+      <span style="top:55%;left:45%;animation-delay:1s"></span>
+      <span style="top:38%;left:30%;animation-delay:1.4s"></span>
+      <span style="top:25%;left:50%;animation-delay:1.8s"></span>
+    </div>
+  </div>
+  <div class="displaced-content">
+    <h2 id="dHead">无国界的伤痛</h2>
+    <div class="d-giga" id="dGiga">1.14亿</div>
+    <div class="d-unit" id="dUnit">全球被迫流离失所者（2023）</div>
+    <div class="d-desc" id="dDesc">他们失去了国籍、房屋和身份，在难民营中等待着一个不知何时才能到来的"明天"。</div>
+  </div>
+</section>
+
+<!-- ── Section 8: 结语 ── -->
+<section class="call-to-action" id="sec8">
+  <div class="slide-bg">
+    <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=1600&q=80" alt="" loading="lazy">
+    <div class="overlay" style="background:rgba(0,0,0,.35)"></div>
+  </div>
+  <div class="cta-content">
+    <h2 id="ctaHead">和平，<span>不是天赋的权利</span>，而是选择</h2>
+    <p id="ctaP">历史的伤疤提醒我们，冲突的代价永远由普通人承担。我们无法改变过去，但我们可以决定未来。</p>
+    <a class="cta-btn" href="https://www.un.org/peace" target="_blank" rel="noopener">了解如何支持和平倡议</a>
+    <div class="cta-source">数据来源：联合国难民署 (UNHCR)、斯德哥尔摩国际和平研究所 (SIPRI) 2023年度报告</div>
+    <div class="footer-credit">小猫用户制作</div>
+  </div>
+</section>
+
+<script>
+(function(){
+'use strict';
+
+gsap.registerPlugin(ScrollTrigger);
+
+/* ── 1. Hero 文字重击入场 ── */
+gsap.set('#h1a', { filter: 'blur(18px)', scale: 0.92, y: 25, opacity: 0 });
+gsap.set('#h1b', { filter: 'blur(18px)', scale: 0.92, y: 25, opacity: 0 });
+gsap.set('#hSub', { opacity: 0, y: 15 });
+gsap.set('#hLine', { scaleX: 0, opacity: 0 });
+gsap.set('#hDesc', { opacity: 0, y: 12 });
+
+var enterTl = gsap.timeline({ delay: 0.2 });
+enterTl.to('#h1a', { filter: 'blur(0px)', scale: 1, y: 0, opacity: 1, duration: 0.6, ease: 'power4.out' }, 0);
+enterTl.to('#h1a', { x: -2, duration: 0.05, ease: 'power1.in' }, 0.5);
+enterTl.to('#h1a', { x: 3, duration: 0.05, ease: 'power1.in' }, 0.55);
+enterTl.to('#h1a', { x: -1, duration: 0.04, ease: 'power1.in' }, 0.6);
+enterTl.to('#h1a', { x: 0, duration: 0.05, ease: 'power1.out' }, 0.64);
+enterTl.to('#h1b', { filter: 'blur(0px)', scale: 1, y: 0, opacity: 1, duration: 0.6, ease: 'power4.out' }, 0.15);
+enterTl.to('#hSub', { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, 0.5);
+enterTl.to('#hLine', { scaleX: 1, opacity: 1, duration: 0.6, ease: 'power2.out', transformOrigin: 'center' }, 0.6);
+enterTl.to('#hDesc', { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, 0.8);
+
+/* ── 1b. Hero 穿透效果 ── */
+gsap.to('#heroText', {
+  scrollTrigger: {
+    trigger: '#hero',
+    start: 'top top',
+    end: 'bottom center',
+    scrub: 1
+  },
+  scale: 1.5,
+  opacity: 0,
+  y: -80,
+  ease: 'power2.out'
+});
+gsap.to('#scrollHint', {
+  scrollTrigger: {
+    trigger: '#hero',
+    start: 'top top',
+    end: 'bottom top',
+    scrub: 1
+  },
+  opacity: 0,
+  ease: 'power2.out'
+});
+
+/* ── 每个有背景图的 section 添加视差背景过渡 ── */
+function sectionBgParallax(sectionId, bgId) {
+  var bgEl = document.getElementById(bgId);
+  if (!bgEl) return;
+  gsap.set(bgEl, { opacity: 0, scale: 1.08 });
+  gsap.to(bgEl, {
+    scrollTrigger: {
+      trigger: '#' + sectionId,
+      start: 'top bottom',
+      end: 'top center',
+      scrub: 1.2
+    },
+    opacity: 1,
+    scale: 1,
+    ease: 'power1.out'
+  });
+
+}
+
+sectionBgParallax('sec2', 'sec2Bg');
+sectionBgParallax('sec3', 'sec3Bg');
+sectionBgParallax('sec4', 'sec4Bg');
+// sec5, sec6, sec7, sec8 的 slide-bg 没有独立 id，用通用方法
+
+/* ── 通用背景淡入淡出（没有独立 bg id 的 section） ── */
+function sectionBgFade(sectionSelector) {
+  var sec = document.querySelector(sectionSelector);
+  if (!sec) return;
+  // 只对前面几个有 slide-bg 的 section 应用
+  var checkIds = ['sec5','sec6','sec7','sec8'];
+  var matched = false;
+  for (var i = 0; i < checkIds.length; i++) {
+    if (sectionSelector.indexOf(checkIds[i]) > 0 || sectionSelector === '#' + checkIds[i]) {
+      matched = true;
+      break;
+    }
+  }
+  if (!matched) return;
+  
+  var bg = sec.querySelector('.slide-bg');
+  if (!bg) return;
+  
+  gsap.set(bg, { opacity: 0, scale: 1.05 });
+  gsap.to(bg, {
+    scrollTrigger: {
+      trigger: sec,
+      start: 'top bottom',
+      end: 'top center',
+      scrub: 1
+    },
+    opacity: 1,
+    scale: 1,
+    ease: 'power1.out'
+  });
+
+}
+
+sectionBgFade('#sec5');
+sectionBgFade('#sec6');
+sectionBgFade('#sec7');
+sectionBgFade('#sec8');
+
+/* ── 3. Section 2 数据卡片入场 ── */
+var cards = ['.card1','.card2','.card3','.card4'];
+var cardEls = document.querySelectorAll(cards.join(','));
+cardEls.forEach(function(el) { gsap.set(el, { opacity: 0, y: 50 }); });
+gsap.to(cardEls, {
+  scrollTrigger: {
+    trigger: '#sec2',
+    start: 'top 80%',
+    toggleActions: 'play none none none'
+  },
+  opacity: 1,
+  y: 0,
+  stagger: 0.2,
+  duration: 0.8,
+  ease: 'power2.out',
+  overwrite: 'auto'
+});
+
+/* ── 4. 内容淡入 — 绵长版 ── */
+function fadeInUp(el, d) {
+  gsap.set(el, { opacity: 0, y: 35 });
+  gsap.to(el, {
+    scrollTrigger: {
+      trigger: el,
+      start: 'top 82%',
+      toggleActions: 'play none none none'
+    },
+    opacity: 1,
+    y: 0,
+    duration: 0.8,
+    delay: d || 0,
+    ease: 'power2.out',
+    overwrite: 'auto'
+  });
+}
+
+fadeInUp('#col3a', 0);
+fadeInUp('#col3b', 0.15);
+fadeInUp('#gigaNum', 0);
+fadeInUp('#gigaSub', 0.1);
+fadeInUp('#gigaDesc', 0.2);
+fadeInUp('#ecoTitle', 0);
+fadeInUp('#ecoGiga', 0.1);
+fadeInUp('#ecoUnit', 0.15);
+fadeInUp('#ecoDesc', 0.2);
+fadeInUp('#ecoLeft', 0);
+fadeInUp('#ecoDiv', 0.1);
+fadeInUp('#ecoRight', 0.2);
+fadeInUp('#dHead', 0);
+fadeInUp('#dGiga', 0.1);
+fadeInUp('#dUnit', 0.15);
+fadeInUp('#dDesc', 0.2);
+fadeInUp('#ctaHead', 0);
+fadeInUp('#ctaP', 0.15);
+
+/* ── 5. Nav scroll ── */
+var nav = document.getElementById('nav');
+ScrollTrigger.create({
+  start: 40,
+  onUpdate: function(self) {
+    nav.classList.toggle('scrolled', self.progress > 0);
+  }
+});
+
+ScrollTrigger.refresh();
+})();
+</script>
+
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
